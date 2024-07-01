@@ -10,14 +10,9 @@ import {
   FormControl,
   Container,
 } from "@mui/material";
-import {
-  Timeline,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineConnector,
-  TimelineContent,
-  TimelineDot,
-} from "@mui/lab";
+import { Timeline } from "@mui/lab";
+
+import TimelineSteps from "../components/Timeline/TimelineSteps";
 
 export default function InsertionSort() {
   const [value, setValue] = useState("");
@@ -104,25 +99,7 @@ export default function InsertionSort() {
         {!isSorted ? (
           <Timeline>
             {sortSteps.slice(0, count + 1).map((step, id) => (
-              <TimelineItem key={id}>
-                <TimelineSeparator>
-                  <TimelineDot color={id % 2 ? "primary" : "secondary"} />
-                  <TimelineConnector />
-                </TimelineSeparator>
-                {step.map((item, index) => (
-                  <TimelineContent key={index}>
-                    <Avatar
-                      sx={{
-                        margin: 1,
-                        backgroundColor: "secondary.main",
-                        color: "secondary.contrastText",
-                      }}
-                    >
-                      {item}
-                    </Avatar>
-                  </TimelineContent>
-                ))}
-              </TimelineItem>
+              <TimelineSteps key={id} step={step} id={id} />
             ))}
           </Timeline>
         ) : (
