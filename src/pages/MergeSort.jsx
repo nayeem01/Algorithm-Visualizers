@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Bubble from "../helper/Bubble";
+import mergeSort from "../helper/mergeSort";
 import {
   Input,
   Avatar,
@@ -12,19 +12,21 @@ import {
   List,
   ListItem,
   ListItemText,
+  Stack,
 } from "@mui/material";
 
 import { Timeline } from "@mui/lab";
 
 import TimelineSteps from "../components/Timeline/TimelineSteps";
 
-export default function BubbleSort() {
+export default function MergeSort() {
   const [value, setValue] = useState("");
   const [count, setCount] = useState(0);
   const [preview, setPreview] = useState(1);
   const [sortSteps, setSortSteps] = useState([]);
+  const [leftSteps, setLeftSteps] = useState([]);
+  const [rightSteps, setRightSteps] = useState([]);
   const [currentStep, setCurrentStep] = useState([]);
-  const [positions, setPositions] = useState([]);
 
   const onChange = (event) => {
     setValue(event.target.value);
@@ -43,18 +45,20 @@ export default function BubbleSort() {
     setCount(0);
     setPreview(1);
     setSortSteps([]);
+    setLeftSteps([]);
+    setRightSteps([]);
     setCurrentStep([]);
-    setPositions([]);
   };
 
   const handleInputArr = () => {
     const inputArr = value
       ? value.split(",").map((item) => parseInt(item, 10))
       : [];
-    const [steps, pos] = Bubble([...inputArr]);
-    setSortSteps(Object.values(steps));
-    setPositions(pos);
-    setCurrentStep(steps[1]);
+    const { steps, leftArr, rightArr } = mergeSort([...inputArr]);
+    setSortSteps(steps);
+    setLeftSteps(leftArr);
+    setRightSteps(rightArr);
+    setCurrentStep(steps[0]);
     setCount(1);
     setPreview(1);
   };
@@ -92,25 +96,27 @@ export default function BubbleSort() {
           />
         </FormControl>
         <div>
-          {value.split(",").map((item, id) => (
-            <Avatar
-              key={id}
-              sx={{
-                margin: 1,
-                backgroundColor: "secondary.main",
-                color: "secondary.contrastText",
-              }}
-            >
-              {item}
-            </Avatar>
-          ))}
+          <Stack direction="row" spacing={2}>
+            {value.split(",").map((item, id) => (
+              <Avatar
+                key={id}
+                sx={{
+                  margin: 1,
+                  backgroundColor: "secondary.main",
+                  color: "secondary.contrastText",
+                }}
+              >
+                {item}
+              </Avatar>
+            ))}
+          </Stack>
           <Button
             variant="contained"
             color="secondary"
             onClick={handleInputArr}
             disabled={!isEnable || count > 0}
           >
-            Bubble Sort
+            Merge Sort
           </Button>
         </div>
         <div>
@@ -118,7 +124,7 @@ export default function BubbleSort() {
           {!isSorted ? (
             <div>
               <List>
-                <ListItemText primary="Current State and Target Swap :" />
+                <ListItemText primary="Current State:" />
                 <ListItem
                   sx={{
                     display: "flex",
@@ -133,16 +139,8 @@ export default function BubbleSort() {
                         key={idx}
                         sx={{
                           margin: 1,
-                          backgroundColor:
-                            idx === positions[count] ||
-                            idx === positions[count] + 1
-                              ? "primary.main"
-                              : "secondary.main",
-                          color:
-                            idx === positions[count] ||
-                            idx === positions[count] + 1
-                              ? "primary.contrastText"
-                              : "secondary.contrastText",
+                          backgroundColor: "secondary.main",
+                          color: "secondary.contrastText",
                         }}
                       >
                         {item}
@@ -150,12 +148,26 @@ export default function BubbleSort() {
                     ))}
                 </ListItem>
               </List>
-              <Timeline>
-                <ListItemText primary="Tree view" />
-                {sortSteps.slice(0, count).map((step, id) => (
-                  <TimelineSteps key={id} step={step} id={id} />
-                ))}
-              </Timeline>
+              <Stack direction="row" spacing={2}>
+                <Timeline>
+                  <ListItemText primary="Tree view" />
+                  {sortSteps.slice(0, count).map((step, id) => (
+                    <TimelineSteps key={id} step={step} id={id} />
+                  ))}
+                </Timeline>
+                <h3>Left Steps</h3>
+                <Timeline>
+                  {leftSteps.map((stepGroup, id) => (
+                    <TimelineSteps key={id} step={stepGroup} id={id} />
+                  ))}
+                </Timeline>
+                <h3>Right Steps</h3>
+                <Timeline>
+                  {rightSteps.map((stepGroup, id) => (
+                    <TimelineSteps key={id} step={stepGroup} id={id} />
+                  ))}
+                </Timeline>
+              </Stack>
             </div>
           ) : (
             <div>

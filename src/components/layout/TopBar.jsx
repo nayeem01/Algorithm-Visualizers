@@ -40,6 +40,12 @@ export default function TopBar() {
                 Insertion
               </Button>
             </Link>
+
+            <Link to="/merge">
+              <Button sx={{ my: 2, color: "white", display: "block" }}>
+                Merge
+              </Button>
+            </Link>
           </Box>
         </Toolbar>
       </Container>
